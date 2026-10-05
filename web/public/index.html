@@ -28,6 +28,7 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .nav{position:fixed;z-index:40;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(490px,calc(100% - 20px));display:grid;grid-template-columns:repeat(6,1fr);padding:6px;border-radius:30px;background:rgba(255,253,248,.68);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:var(--bw) solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
 .nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/6);border-radius:24px;background:var(--acc);box-shadow:0 0 0 var(--bw) var(--ink) inset;transform:translateX(calc(var(--i,0)*100%));transition:transform .55s var(--ease)}
 .nav-handle{display:none}
+.nav-cap{display:none}
 .nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;font-size:.68rem;font-weight:600;border-radius:24px;transition:transform .25s var(--ease)}
 .nav button:active{transform:scale(.9)}
 .nav button svg{transition:transform .4s var(--ease)}
@@ -35,12 +36,13 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .nav button:not([aria-current=page]){color:var(--mut)}
 @keyframes navBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 @keyframes navSpin{to{transform:rotate(360deg)}}
-@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:auto;height:58px;border-radius:30px;background:var(--ink);border-color:var(--ink);clip-path:circle(29px at 50% 50%);transition:clip-path .6s cubic-bezier(.34,1.56,.64,1),background .4s var(--ease) .08s,border-color .4s var(--ease) .08s}
-.nav:hover,.nav:focus-within{clip-path:circle(400px at 50% 50%);background:rgba(255,253,248,.68);border-color:rgba(255,255,255,.7)}
-.nav-handle{display:flex;position:absolute;inset:0;margin:auto;width:28px;height:28px;opacity:1;transform:scale(1) rotate(0deg);transition:opacity .3s var(--ease),transform .45s var(--ease);animation:navBreathe 2.6s ease-in-out infinite;pointer-events:none}
+@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:auto;height:58px;border-radius:30px;background:transparent;border-color:transparent;box-shadow:none;transition:background .5s var(--ease) .1s,border-color .5s var(--ease) .1s,box-shadow .5s var(--ease) .1s}
+.nav:hover,.nav:focus-within{background:rgba(255,253,248,.68);border-color:rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
+.nav-cap{display:flex;align-items:center;justify-content:center;position:absolute;z-index:2;top:0;left:50%;transform:translate(-50%,0) scale(1);width:58px;height:58px;border-radius:50%;background:var(--ink);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08);opacity:1;transition:opacity .45s var(--ease),transform .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.nav:hover .nav-cap,.nav:focus-within .nav-cap{opacity:0;transform:translate(-50%,0) scale(1.8)}
+.nav-handle{display:flex;position:absolute;inset:0;margin:auto;width:28px;height:28px;animation:navBreathe 2.6s ease-in-out infinite}
 .nav-handle circle:first-child{transform-origin:16px 16px;animation:navSpin 6s linear infinite}
-.nav:hover .nav-handle,.nav:focus-within .nav-handle{opacity:0;transform:scale(.3) rotate(120deg);animation:none}
-.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;opacity:0;transition:left .5s var(--ease),width .5s var(--ease),opacity .35s var(--ease) .15s}
+.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;opacity:0;transition:left .5s var(--ease),width .5s var(--ease),opacity .35s var(--ease) .2s}
 .nav:hover .ind,.nav:focus-within .ind{opacity:1}
 .nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem;opacity:0;transform:translateX(-14px) scale(.7);transition:opacity .4s var(--ease),transform .45s cubic-bezier(.34,1.56,.64,1)}
 .nav:hover button,.nav:focus-within button{opacity:1;transform:none}
@@ -245,7 +247,7 @@ dialog[open]{animation:vin .4s var(--ease)}
 </section>
 </main>
 
-<nav class="nav" id="nav" aria-label="Navigation principale"><span class="ind" aria-hidden="true"></span><svg class="nav-handle" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="none" stroke="#D9FF57" stroke-width="2.5" stroke-dasharray="34 10" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="#D9FF57"/></svg></nav>
+<nav class="nav" id="nav" aria-label="Navigation principale"><span class="ind" aria-hidden="true"></span><span class="nav-cap" aria-hidden="true"><svg class="nav-handle" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="none" stroke="#D9FF57" stroke-width="2.5" stroke-dasharray="34 10" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="#D9FF57"/></svg></span></nav>
 
 <div class="wrap" id="sh" hidden>
   <div class="scrim" data-act="close"></div>
