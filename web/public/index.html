@@ -27,15 +27,21 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .brand svg{width:34px;height:34px}
 .nav{position:fixed;z-index:40;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(490px,calc(100% - 20px));display:grid;grid-template-columns:repeat(6,1fr);padding:6px;border-radius:30px;background:rgba(255,253,248,.68);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:var(--bw) solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
 .nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/6);border-radius:24px;background:var(--acc);box-shadow:0 0 0 var(--bw) var(--ink) inset;transform:translateX(calc(var(--i,0)*100%));transition:transform .55s var(--ease)}
+.nav-handle{display:none}
 .nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;font-size:.68rem;font-weight:600;border-radius:24px;transition:transform .25s var(--ease)}
 .nav button:active{transform:scale(.9)}
 .nav button svg{transition:transform .4s var(--ease)}
 .nav button[aria-current=page] svg{transform:translateY(-1px) scale(1.12)}
 .nav button:not([aria-current=page]){color:var(--mut)}
-@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:58px;height:58px;border-radius:50%;overflow:hidden;transition:width .45s var(--ease),border-radius .45s var(--ease)}
+@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:58px;height:58px;border-radius:50%;overflow:hidden;transition:width .6s var(--ease),border-radius .6s var(--ease)}
 .nav:hover,.nav:focus-within{width:auto;border-radius:30px}
-.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;transition:left .5s var(--ease),width .5s var(--ease)}
-.nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem}}
+.nav-handle{display:flex;position:absolute;inset:0;margin:auto;width:28px;height:28px;opacity:1;transform:scale(1) rotate(0deg);transition:opacity .35s var(--ease),transform .5s var(--ease);pointer-events:none}
+.nav:hover .nav-handle,.nav:focus-within .nav-handle{opacity:0;transform:scale(.4) rotate(90deg)}
+.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;opacity:0;transition:left .5s var(--ease),width .5s var(--ease),opacity .35s var(--ease) .1s}
+.nav:hover .ind,.nav:focus-within .ind{opacity:1}
+.nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem;opacity:0;transform:translateX(-10px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.nav:hover button,.nav:focus-within button{opacity:1;transform:none}
+.nav button:nth-child(4){transition-delay:.04s}.nav button:nth-child(5){transition-delay:.08s}.nav button:nth-child(6){transition-delay:.12s}.nav button:nth-child(7){transition-delay:.16s}.nav button:nth-child(8){transition-delay:.2s}}
 /* Layout */
 main{max-width:1180px;margin:0 auto;padding:0 20px 150px}
 .view{display:none;padding-top:92px}
@@ -236,7 +242,7 @@ dialog[open]{animation:vin .4s var(--ease)}
 </section>
 </main>
 
-<nav class="nav" id="nav" aria-label="Navigation principale"><span class="ind" aria-hidden="true"></span></nav>
+<nav class="nav" id="nav" aria-label="Navigation principale"><span class="ind" aria-hidden="true"></span><svg class="nav-handle" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="none" stroke="#D9FF57" stroke-width="2.5" stroke-dasharray="34 10" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="#D9FF57"/></svg></nav>
 
 <div class="wrap" id="sh" hidden>
   <div class="scrim" data-act="close"></div>
