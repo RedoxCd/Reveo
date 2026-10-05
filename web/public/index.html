@@ -24,14 +24,19 @@ button{cursor:pointer;background:none;border:0;padding:0}
 svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
 /* Brand + navigation */
 .brand{position:fixed;top:calc(14px + env(safe-area-inset-top));left:18px;z-index:30;display:flex;align-items:center;gap:.5rem;font-weight:800;letter-spacing:.02em}
-.brand svg{width:34px;height:34px}
+.brand svg{width:34px;height:34px;transition:transform .3s var(--ease)}
+.brand button{transition:opacity .25s var(--ease)}
+.brand button:hover{opacity:.7}
+.brand button:hover svg{transform:rotate(-8deg) scale(1.08)}
 .nav{position:fixed;z-index:40;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(490px,calc(100% - 20px));display:grid;grid-template-columns:repeat(6,1fr);padding:6px;border-radius:30px;background:rgba(255,253,248,.68);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:var(--bw) solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
 .nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/6);border-radius:24px;background:var(--acc);box-shadow:0 0 0 var(--bw) var(--ink) inset;transform:translateX(calc(var(--i,0)*100%));transition:transform .55s var(--ease)}
 .nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;font-size:.68rem;font-weight:600;border-radius:24px;transition:transform .25s var(--ease)}
 .nav button:active{transform:scale(.9)}
 .nav button svg{transition:transform .4s var(--ease)}
 .nav button[aria-current=page] svg{transform:translateY(-1px) scale(1.12)}
-.nav button:not([aria-current=page]){color:var(--mut)}
+.nav button:not([aria-current=page]){color:var(--mut);transition:color .25s var(--ease)}
+.nav button:not([aria-current=page]):hover{color:var(--ink)}
+.nav button:not([aria-current=page]):hover svg{transform:translateY(-2px) scale(1.08)}
 @media(min-width:900px){.nav{top:16px;bottom:auto;width:auto;grid-template-columns:repeat(6,auto)}.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;transition:left .5s var(--ease),width .5s var(--ease)}
 .nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem}}
 /* Layout */
