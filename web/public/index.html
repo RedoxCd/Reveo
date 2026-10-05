@@ -32,7 +32,9 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .nav button svg{transition:transform .4s var(--ease)}
 .nav button[aria-current=page] svg{transform:translateY(-1px) scale(1.12)}
 .nav button:not([aria-current=page]){color:var(--mut)}
-@media(min-width:900px){.nav{top:16px;bottom:auto;width:auto;grid-template-columns:repeat(6,auto)}.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;transition:left .5s var(--ease),width .5s var(--ease)}
+@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:58px;height:58px;border-radius:50%;overflow:hidden;transition:width .45s var(--ease),border-radius .45s var(--ease)}
+.nav:hover,.nav:focus-within{width:auto;border-radius:30px}
+.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;transition:left .5s var(--ease),width .5s var(--ease)}
 .nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem}}
 /* Layout */
 main{max-width:1180px;margin:0 auto;padding:0 20px 150px}
