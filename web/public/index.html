@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F3EFE7">
+<title>Reveo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23D9FF57' stroke-width='2.5' stroke-dasharray='34 10'/%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%23D9FF57'/%3E%3C/svg%3E">
+<style>
+/* 1. Variables */
+:root{--bg:#F3EFE7;--ink:#151513;--paper:#FFFDF8;--acc:#D9FF57;--mut:#67635a;--line:rgba(21,21,19,.16);--bw:1px;
+--disp:"Helvetica Neue",Helvetica,Arial,sans-serif;--serif:Georgia,"Times New Roman",serif;--ease:cubic-bezier(.2,.8,.2,1)}
+html.hc{--mut:#151513;--line:rgba(21,21,19,.7);--bw:2px}
+html.lg{font-size:120%}
+html.rm *,html.rm *::before,html.rm *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+*{box-sizing:border-box;margin:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--disp);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px;box-shadow:0 0 0 6px var(--acc)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* Brand + navigation */
+.brand{position:fixed;top:calc(14px + env(safe-area-inset-top));left:18px;z-index:30;display:flex;align-items:center;gap:.5rem;font-weight:800;letter-spacing:.02em}
+.brand svg{width:34px;height:34px}
+.nav{position:fixed;z-index:40;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(490px,calc(100% - 20px));display:grid;grid-template-columns:repeat(6,1fr);padding:6px;border-radius:30px;background:rgba(255,253,248,.68);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:var(--bw) solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
+.nav .ind{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/6);border-radius:24px;background:var(--acc);box-shadow:0 0 0 var(--bw) var(--ink) inset;transform:translateX(calc(var(--i,0)*100%));transition:transform .55s var(--ease)}
+.nav button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;font-size:.68rem;font-weight:600;border-radius:24px;transition:transform .25s var(--ease)}
+.nav button:active{transform:scale(.9)}
+.nav button svg{transition:transform .4s var(--ease)}
+.nav button[aria-current=page] svg{transform:translateY(-1px) scale(1.12)}
+.nav button:not([aria-current=page]){color:var(--mut)}
+@media(min-width:900px){.nav{top:16px;bottom:auto;width:auto;grid-template-columns:repeat(6,auto)}.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;transition:left .5s var(--ease),width .5s var(--ease)}
+.nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem}}
+/* Layout */
+main{max-width:1180px;margin:0 auto;padding:0 20px 150px}
+.view{display:none;padding-top:92px}
+.view.on{display:block;animation:vin .7s var(--ease) both}
+@keyframes vin{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+h1.pg{font-size:clamp(2.8rem,10vw,6rem);font-weight:800;letter-spacing:-.045em;line-height:.9}
+h2{font-size:clamp(1.8rem,5vw,3.2rem);font-weight:800;letter-spacing:-.035em;line-height:1}
+.lead{color:var(--mut);max-width:34rem;margin-top:1rem}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.btn{display:inline-flex;align-items:center;gap:.5rem;min-height:52px;padding:0 1.5rem;border-radius:99px;border:var(--bw) solid var(--ink);font-weight:600;transition:transform .3s var(--ease),background .3s,box-shadow .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 0 -4px var(--ink)}
+.btn:active{transform:scale(.96);box-shadow:none}
+.btn.pri{background:var(--ink);color:var(--paper)}
+.btn.pri:hover{background:var(--acc);color:var(--ink)}
+.btn.sm{min-height:44px;padding:0 1.1rem;font-size:.92rem}
+.btn.dng{border-color:#8a1c1c;color:#8a1c1c}
+/* Hero */
+.hero{position:relative;min-height:calc(100svh - 130px);display:flex;flex-direction:column;justify-content:center;isolation:isolate}
+.hero h1{font-size:clamp(3.6rem,17vw,12.5rem);font-weight:800;letter-spacing:-.06em;line-height:.82}
+.hero h1 span{display:block;overflow:hidden;padding-bottom:.06em}
+.hero h1 span>em{display:block;font-style:normal;animation:rise 1.1s var(--ease) both}
+.hero h1 span:nth-child(2)>em{animation-delay:.15s}
+.out{color:transparent;-webkit-text-stroke:var(--bw) var(--ink);-webkit-text-stroke-width:2px}
+@keyframes rise{from{transform:translateY(105%)}to{transform:none}}
+.hero p.lead{font-size:1.15rem;animation:vin 1s .5s var(--ease) both}
+.cta{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem;animation:vin 1s .65s var(--ease) both}
+.orb{position:absolute;z-index:-1;right:-6%;top:6%;width:min(62vw,520px);aspect-ratio:1;transform:translateY(calc(var(--py,0)*-.15px))}
+.orb b{position:absolute;inset:32% 6% 32% 58%;background:var(--acc);border-radius:58% 42% 55% 45%/48% 58% 42% 52%;animation:morph 9s ease-in-out infinite}
+.orb-icon{position:absolute;left:76%;top:50%;width:20%;aspect-ratio:1;transform:translate(-50%,-50%);fill:none;stroke:var(--ink);stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+@keyframes morph{50%{border-radius:42% 58% 45% 55%/60% 44% 56% 40%;transform:rotate(25deg) scale(1.06)}}
+.blob{position:absolute;z-index:-1;left:-8%;bottom:4%;width:190px;height:150px;background:var(--ink);border-radius:60% 40% 55% 45%/50% 60% 40% 50%;transform:translateY(calc(var(--py,0)*.12px))}
+/* Day + statement */
+.day{margin-top:5rem}
+.rows{list-style:none;padding:0;margin-top:2rem;border-top:var(--bw) solid var(--ink)}
+.row{display:grid;grid-template-columns:5.2rem 1fr auto;gap:1rem;align-items:center;width:100%;text-align:left;padding:1.2rem 0;border-bottom:var(--bw) solid var(--line);transition:padding .35s var(--ease),background .3s}
+.row:hover{padding-left:.8rem;background:rgba(255,253,248,.7)}
+.row .t{font-size:clamp(1.7rem,5vw,2.6rem);font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.row .n{font-weight:600;font-size:1.15rem}.row .s{color:var(--mut);font-size:.88rem}
+.row.off .n{text-decoration:line-through}
+.empty{margin-top:2rem;padding:3.5rem 1.5rem;border:var(--bw) dashed var(--ink);border-radius:46px 46px 46px 12px;text-align:center}
+.empty h3{font-size:1.7rem;letter-spacing:-.03em}.empty p{color:var(--mut);margin:.5rem 0 1.4rem}
+.dark{margin:6rem -20px 0;padding:6rem 20px;background:var(--ink);color:var(--paper);border-radius:48px}
+.dark .big{max-width:1000px;margin:0 auto;font:italic 400 clamp(2rem,6.4vw,4.6rem)/1.08 var(--serif);letter-spacing:-.02em}
+.dark ul{max-width:1000px;margin:4rem auto 0;padding:0;list-style:none;display:grid;gap:2rem}
+.dark li{border-top:1px solid rgba(255,253,248,.25);padding-top:1rem}
+.dark li b{display:block;font-size:1.3rem;color:var(--acc);margin-bottom:.3rem}
+.dark li span{opacity:.78}
+@media(min-width:800px){.dark{margin:8rem 0 0;padding:8rem 5vw}.dark ul{grid-template-columns:repeat(3,1fr)}}
+/* Calendar */
+.calhead{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:2rem 0 1rem;flex-wrap:wrap}
+.calhead h2{text-transform:capitalize;min-width:9ch}
+.ib{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;border:var(--bw) solid var(--ink);transition:transform .3s var(--ease),background .3s}
+.ib:hover{background:var(--acc);transform:scale(1.08)}.ib:active{transform:scale(.9)}
+.wd,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd span{text-align:center;font-size:.8rem;color:var(--mut);padding:.4rem 0}
+.grid.slR{animation:slR .55s var(--ease)}.grid.slL{animation:slL .55s var(--ease)}
+@keyframes slR{from{opacity:0;transform:translateX(40px)}}@keyframes slL{from{opacity:0;transform:translateX(-40px)}}
+.day-b{position:relative;aspect-ratio:1/1.05;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:38% 38% 38% 14%;transition:transform .3s var(--ease),background .3s,color .3s}
+.day-b:hover{background:var(--paper);transform:translateY(-3px) rotate(-2deg)}
+.day-b b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.day-b.today{box-shadow:0 0 0 2px var(--ink) inset}
+.day-b.sel{background:var(--ink);color:var(--paper);animation:pop .4s var(--ease)}
+@keyframes pop{50%{transform:scale(1.12)}}
+.dots{display:flex;gap:3px;height:6px}.dots u{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 1.5px var(--ink)}
+.two{display:grid;gap:2rem}
+@media(min-width:900px){.two{grid-template-columns:1.15fr 1fr;align-items:start}}
+/* Cards */
+.list{display:grid;gap:14px;margin-top:1.4rem}
+.card{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:1rem;align-items:center;padding:1.2rem 1.3rem;background:var(--paper);border:var(--bw) solid var(--line);border-radius:34px 34px 34px 8px;transition:transform .4s var(--ease),box-shadow .4s;animation:vin .6s var(--ease) both}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 30px -18px rgba(21,21,19,.4)}
+.card.t-depart{border-radius:8px 34px 34px 34px}.card.t-appt{border-radius:34px 8px 34px 34px}.card.t-remind{border-radius:34px 34px 8px 34px}
+.card .tm{font-size:2rem;font-weight:800;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.card h3{font-size:1.1rem;font-weight:700}
+.card .m{color:var(--mut);font-size:.85rem;display:flex;flex-wrap:wrap;gap:.2rem .8rem;margin-top:.2rem}
+.card .m span{display:inline-flex;align-items:center;gap:.3rem}
+.card.off{opacity:.62}.card.off h3::after{content:" (désactivée)";font-weight:400;font-size:.8rem}
+.acts{display:flex;align-items:center;gap:6px}
+.acts .ib{width:44px;height:44px;border-color:transparent}
+.acts .ib:hover{border-color:var(--ink)}
+.sw{position:relative;width:52px;height:32px;border-radius:99px;border:var(--bw) solid var(--ink);background:var(--bg);transition:background .35s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--ink);transition:transform .45s var(--ease)}
+.sw[aria-checked=true]{background:var(--acc)}.sw[aria-checked=true]::after{transform:translateX(20px)}
+@media(max-width:560px){.card{grid-template-columns:auto 1fr}.card .acts{grid-column:1/-1;justify-content:flex-end}}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:0 1rem;border-radius:99px;border:var(--bw) solid var(--ink);transition:background .3s,transform .3s var(--ease)}
+.chip input:checked+span{background:var(--ink);color:var(--paper)}
+.chip input:focus-visible+span{outline:3px solid var(--ink);outline-offset:3px;box-shadow:0 0 0 6px var(--acc)}
+.chip:active span{transform:scale(.94)}
+/* Watch + settings */
+.panel{margin-top:2rem;padding:2rem;background:var(--paper);border:var(--bw) solid var(--line);border-radius:56px 56px 56px 14px}
+.stat{display:flex;align-items:center;gap:.8rem;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:800;letter-spacing:-.03em}
+.led{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink);flex:none}.stat.on .led{background:var(--acc);animation:beat 2s infinite}
+@keyframes beat{50%{box-shadow:0 0 0 8px rgba(217,255,87,.5)}}
+dl{margin-top:1.5rem;display:grid;gap:.6rem}dl div{display:flex;justify-content:space-between;gap:1rem;border-bottom:var(--bw) solid var(--line);padding-bottom:.6rem}
+dt{color:var(--mut)}dd{font-weight:600;text-align:right;word-break:break-word}
+.note{margin-top:1rem;padding:1rem 1.2rem;border-radius:24px;background:rgba(21,21,19,.06);font-size:.92rem}
+.note.err{background:#fde9e4;border:var(--bw) solid #8a1c1c}
+.btns{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.6rem;align-items:center}
+.set{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.3rem 0;border-bottom:var(--bw) solid var(--line)}
+.set p{color:var(--mut);font-size:.9rem}
+/* Sheet */
+.wrap{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center}
+.wrap[hidden]{display:none}
+.scrim{position:absolute;inset:0;background:rgba(21,21,19,.45);opacity:0;transition:opacity .4s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.sheet{position:relative;width:min(640px,100%);max-height:94svh;overflow:auto;background:var(--bg);border-radius:36px 36px 0 0;padding:1.4rem 1.4rem calc(1.6rem + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .55s var(--ease)}
+.wrap.open .scrim{opacity:1}.wrap.open .sheet{transform:none}
+@media(min-width:700px){.wrap{align-items:center}.sheet{border-radius:48px 48px 48px 12px;transform:translateY(40px) scale(.96);opacity:0;transition:transform .5s var(--ease),opacity .4s}.wrap.open .sheet{opacity:1}}
+.grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 1rem}
+.fld{display:grid;gap:.4rem;margin-top:1.1rem}
+.fld[hidden]{display:none}
+.fld>label,.fld>span{font-weight:600;font-size:.92rem}
+.fld input[type=text],.fld input[type=date],.fld input[type=time],.fld input[type=number],.fld input[type=email],.fld input[type=password],.fld select,.fld textarea{width:100%;min-height:52px;padding:.7rem 1rem;border-radius:20px;border:var(--bw) solid var(--ink);background:var(--paper)}
+.fld input:focus-visible{outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 0 0 6px var(--acc)}
+.fld small{color:var(--mut)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+dialog{border:var(--bw) solid var(--ink);border-radius:36px 36px 36px 10px;padding:1.6rem;background:var(--bg);color:var(--ink);max-width:min(400px,calc(100% - 32px))}
+dialog::backdrop{background:rgba(21,21,19,.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+dialog[open]{animation:vin .4s var(--ease)}
+#toast{position:fixed;z-index:80;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translate(-50%,-140%);padding:.8rem 1.3rem;border-radius:99px;background:var(--ink);color:var(--paper);box-shadow:0 12px 30px rgba(0,0,0,.3);transition:transform .5s var(--ease);max-width:calc(100% - 28px);text-align:center}
+#toast.show{transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="wrap open" id="authGate" style="z-index:100">
+  <div class="scrim" style="opacity:1"></div>
+  <form class="sheet" id="authForm" style="max-width:420px;width:min(420px,100%)" novalidate>
+    <div style="display:flex;justify-content:center;margin-bottom:1rem"><svg viewBox="0 0 32 32" style="width:44px;height:44px" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="none" stroke="#D9FF57" stroke-width="2.5" stroke-dasharray="34 10" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="#D9FF57"/></svg></div>
+    <h2 id="authTitle" style="text-align:center">Connexion</h2>
+    <p class="lead" style="text-align:center;margin:.3rem auto 0">Le même compte fonctionne aussi sur grade.benross.ch.</p>
+    <div class="fld" id="auEwrap" hidden><label for="auE">Email</label><input type="email" id="auE" placeholder="exemple@email.com" autocomplete="email"></div>
+    <div class="fld"><label for="auU">Nom d’utilisateur</label><input type="text" id="auU" placeholder="ton_pseudo" autocomplete="username" required></div>
+    <div class="fld"><label for="auP">Mot de passe</label><input type="password" id="auP" placeholder="••••••••" autocomplete="current-password" required></div>
+    <small id="auErr" role="alert" style="color:#8a1c1c"></small>
+    <div class="btns"><button class="btn pri" type="submit" id="auSubmit" style="width:100%;justify-content:center">Se connecter</button></div>
+    <p class="lead" style="text-align:center;margin-top:1rem"><button type="button" class="btn sm" id="auSwitch" style="border-color:transparent">Pas de compte ? Inscrivez-vous</button></p>
+  </form>
+</div>
+
+<header class="brand"><button data-go="home" style="display:flex;align-items:center;gap:.5rem;font-weight:800" aria-label="Reveo, accueil"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="7" fill="none" stroke="#D9FF57" stroke-width="2.5" stroke-dasharray="34 10" stroke-linecap="round"/><circle cx="16" cy="16" r="2.6" fill="#D9FF57"/></svg>Reveo</button></header>
+
+<main>
+<section id="v-home" class="view" aria-labelledby="h-home">
+  <div class="hero">
+    <div class="orb" aria-hidden="true"><b></b><svg class="orb-icon" viewBox="0 0 24 24"><path d="M8 3h8l1 4H7zM8 21h8l1-4H7zM7 7h10v10H7zM12 10v2.5l1.5 1"/></svg></div><div class="blob" aria-hidden="true"></div>
+    <h1 id="h-home"><span><em>Ne ratez</em></span><span><em class="out">plus rien.</em></span></h1>
+    <p class="lead">Réveils, rendez-vous, heures de départ. Reveo les envoie à votre montre, qui vibre au poignet. Rien à entendre.</p>
+    <div class="cta"><button class="btn pri" data-act="new">Créer une alerte</button><button class="btn" data-go="watch">Connecter la montre</button></div>
+  </div>
+  <section class="day rv" aria-labelledby="h-day"><h2 id="h-day">Aujourd’hui</h2><p class="lead" id="todayLbl"></p><div id="dayBox"></div></section>
+  <section class="dark rv" aria-label="Principes">
+    <p class="big">Un poignet qui vibre. Un écran qui écrit. Aucune information ne passe uniquement par le son.</p>
+    <ul><li><b>Quatre motifs</b><span>Courte, double, longue ou triple : chaque alerte a sa vibration.</span></li>
+    <li><b>Le départ calculé</b><span>Saisissez le trajet, Reveo retranche le temps et crée l’alerte de départ.</span></li>
+    <li><b>Un seul compte</b><span>Le même compte fonctionne aussi sur grade.benross.ch. Vos alertes suivent votre profil, pas un appareil.</span></li></ul>
+  </section>
+</section>
+
+<section id="v-agenda" class="view" aria-labelledby="h-agenda">
+  <h1 class="pg" id="h-agenda">Agenda</h1>
+  <div class="two">
+    <div>
+      <div class="calhead"><h2 id="calT" aria-live="polite"></h2>
+        <div class="chips"><button class="ib" data-act="prev" aria-label="Mois précédent"></button><button class="btn sm" data-act="today">Aujourd’hui</button><button class="ib" data-act="next" aria-label="Mois suivant"></button></div></div>
+      <div class="wd" aria-hidden="true"><span>lun</span><span>mar</span><span>mer</span><span>jeu</span><span>ven</span><span>sam</span><span>dim</span></div>
+      <div class="grid" id="grid"></div>
+    </div>
+    <div><h2 id="selT" style="font-size:1.8rem;text-transform:capitalize"></h2><div class="list" id="selList" aria-live="polite"></div>
+      <div class="cta" style="animation:none"><button class="btn pri" data-act="newday">Ajouter à ce jour</button></div></div>
+  </div>
+</section>
+
+<section id="v-alerts" class="view" aria-labelledby="h-alerts">
+  <h1 class="pg" id="h-alerts">Alertes</h1>
+  <p class="lead">Réveils, alarmes, rendez-vous, départs et rappels, avec leur vibration.</p>
+  <div class="chips" id="filters" role="group" aria-label="Filtrer par type" style="margin-top:1.6rem"></div>
+  <div class="list" id="allList"></div>
+  <div class="cta" style="animation:none"><button class="btn pri" data-act="new">Créer une alerte</button></div>
+</section>
+
+<section id="v-watch" class="view" aria-labelledby="h-watch">
+  <h1 class="pg" id="h-watch">Votre montre</h1>
+  <p class="lead">LilyGO T-Watch S3, par Bluetooth. Seules les informations réellement reçues de la montre sont affichées.</p>
+  <div class="panel" id="watchBox"></div>
+</section>
+
+<section id="v-settings" class="view" aria-labelledby="h-set">
+  <h1 class="pg" id="h-set">Réglages</h1>
+  <div style="margin-top:2rem;border-top:var(--bw) solid var(--ink)" id="setBox"></div>
+</section>
+
+<section id="v-profile" class="view" aria-labelledby="h-profile">
+  <h1 class="pg" id="h-profile">Profil</h1>
+  <p class="lead">Ce compte fonctionne aussi sur grade.benross.ch.</p>
+  <div class="panel" id="profileBox"></div>
+</section>
+</main>
+
+<nav class="nav" id="nav" aria-label="Navigation principale"><span class="ind" aria-hidden="true"></span></nav>
+
+<div class="wrap" id="sh" hidden>
+  <div class="scrim" data-act="close"></div>
+  <form class="sheet" id="form" role="dialog" aria-modal="true" aria-labelledby="shT" novalidate>
+    <div class="grab" aria-hidden="true"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><h2 id="shT" style="font-size:2rem"></h2><button type="button" class="ib" data-act="close" aria-label="Fermer"></button></div>
+    <div class="fld"><label for="fN">Nom</label><input type="text" id="fN" maxlength="60" placeholder="Ex. Dentiste" autocomplete="off"><small id="eN" role="alert"></small></div>
+    <div class="fld"><span id="lT">Type</span><div class="chips" id="fT" role="radiogroup" aria-labelledby="lT"></div></div>
+    <div class="row2"><div class="fld"><label for="fD">Date</label><input type="date" id="fD"></div><div class="fld"><label for="fH">Heure</label><input type="time" id="fH"></div></div>
+    <div class="fld" id="tr"><label for="fTr">Temps de trajet, en minutes</label><input type="number" id="fTr" min="0" max="600" inputmode="numeric" placeholder="Ex. 25"><small id="dep">Temps de trajet manuel : Reveo ne le calcule pas.</small></div>
+    <div class="fld"><label for="fR">Répétition</label><select id="fR"></select></div>
+    <div class="fld"><span id="lV">Motif de vibration</span><div class="chips" id="fV" role="radiogroup" aria-labelledby="lV"></div></div>
+    <div class="fld"><label for="fM">Durée de vibration, en millisecondes</label><input type="number" id="fM" min="100" max="5000" step="100" inputmode="numeric"></div>
+    <div class="fld"><label for="fP">Lieu</label><input type="text" id="fP" maxlength="80" autocomplete="off"></div>
+    <div class="fld"><label for="fO">Note</label><textarea id="fO" rows="2" maxlength="200"></textarea></div>
+    <div class="btns"><button class="btn pri" type="submit">Enregistrer</button><button type="button" class="btn" data-act="close">Annuler</button></div>
+  </form>
+</div>
+<dialog id="cf" aria-labelledby="cfT"><p id="cfT" style="font-weight:600;font-size:1.15rem"></p><div class="btns"><button class="btn dng" data-cf="yes" id="cfY">Supprimer</button><button class="btn" data-cf="no">Annuler</button></div></dialog>
+<dialog id="pwdDlg" aria-labelledby="pwdT">
+  <form id="pwdForm" novalidate>
+    <p id="pwdT" style="font-weight:600;font-size:1.15rem;margin-bottom:.4rem">Changer le mot de passe</p>
+    <div class="fld"><label for="pwCur">Mot de passe actuel</label><input type="password" id="pwCur" autocomplete="current-password"></div>
+    <div class="fld"><label for="pwNew">Nouveau mot de passe</label><input type="password" id="pwNew" autocomplete="new-password"></div>
+    <small id="pwErr" role="alert" style="color:#8a1c1c"></small>
+    <div class="btns"><button class="btn pri" type="submit">Changer</button><button class="btn" type="button" id="pwCancel">Annuler</button></div>
+  </form>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* 2. Données */
+const TYPES={wake:{l:"Réveil",i:"sun"},alarm:{l:"Alarme",i:"bell"},appt:{l:"Rendez-vous",i:"cal"},depart:{l:"Départ",i:"go"},remind:{l:"Rappel",i:"flag"}};
+const VIBS={short:"Courte",double:"Double",long:"Longue",triple:"Triple"};
+const REPS={once:"Une fois",daily:"Chaque jour",weekly:"Chaque semaine",weekdays:"Lundi-vendredi"};
+const PAGES=[["home","Accueil","home"],["agenda","Agenda","cal"],["alerts","Alertes","bell"],["watch","Montre","watch"],["settings","Réglages","sliders"],["profile","Profil","user"]];
+const ICONS={home:"M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z",cal:"M4 6h16v14H4zM4 10h16M8 3v4M16 3v4",bell:"M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 21h4",
+watch:"M8 3h8l1 4H7zM8 21h8l1-4H7zM7 7h10v10H7zM12 10v2.5l1.5 1",sliders:"M4 8h9M17 8h3M4 16h3M11 16h9M15 6v4M9 14v4",
+sun:"M16 12a4 4 0 1 1-8 0a4 4 0 1 1 8 0M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2",go:"M5 12h13M13 6l6 6-6 6",flag:"M6 21V4M6 5h11l-2 4 2 4H6",
+edit:"M4 20l1-4L16 5l3 3L8 19zM14 7l3 3",trash:"M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13",x:"M6 6l12 12M18 6L6 18",l:"M15 5l-7 7 7 7",r:"M9 5l7 7-7 7",pin:"M12 21s6-6 6-11a6 6 0 0 0-12 0c0 5 6 11 6 11zM12 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0",vib:"M9 5v14M15 8v8M5 9v6M19 9v6",user:"M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"};
+const ic=n=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`;
+
+/* 3. Stockage */
+const PREFS_KEY="reveo.prefs.v1";
+const TOKEN_KEY="reveo_token";
+const S={alerts:[],prefs:{lg:false,hc:false,rm:false}};
+const AUTH={token:null,username:null};
+function loadPrefsLocal(){try{const j=JSON.parse(localStorage.getItem(PREFS_KEY));if(j)Object.assign(S.prefs,j)}catch(e){}}
+function savePrefsLocal(){try{localStorage.setItem(PREFS_KEY,JSON.stringify(S.prefs))}catch(e){}}
+function authHeaders(){return AUTH.token?{Authorization:"Bearer "+AUTH.token}:{}}
+async function loadAlertsFromServer(){
+  try{
+    const res=await fetch("/api/alerts",{headers:authHeaders()});
+    if(res.status===401)return logout("Session expirée, reconnectez-vous.");
+    const j=await res.json();S.alerts=Array.isArray(j.alerts)?j.alerts:[]
+  }catch(e){toast("Impossible de charger vos alertes.");S.alerts=[]}
+}
+async function syncAlerts(){
+  if(!AUTH.token)return false;
+  try{
+    const res=await fetch("/api/alerts",{method:"PUT",headers:Object.assign({"Content-Type":"application/json"},authHeaders()),body:JSON.stringify({alerts:S.alerts})});
+    if(res.status===401){await logout("Session expirée, reconnectez-vous.");return false}
+    if(!res.ok){toast("Enregistrement impossible.");return false}
+    return true
+  }catch(e){toast("Connexion au serveur impossible.");return false}
+}
+function save(){savePrefsLocal();return syncAlerts()}
+async function logout(msg){
+  try{await fetch("/api/logout",{method:"POST"})}catch(e){}
+  localStorage.removeItem(TOKEN_KEY);AUTH.token=null;AUTH.username=null;S.alerts=[];
+  $("#authGate").hidden=false;toast(msg||"Déconnecté.")
+}
+
+/* 4. Utilitaires */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const ymd=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const fdate=(s,o)=>parse(s).toLocaleDateString("fr-FR",o||{weekday:"long",day:"numeric",month:"long"});
+let toastT;
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),3200)}
+function ask(msg,label){return new Promise(res=>{const d=$("#cf");$("#cfT").textContent=msg;$("#cfY").textContent=label||"Supprimer";d.returnValue="";d.onclose=()=>res(d.returnValue==="yes");d.showModal();d.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>d.close(b.dataset.cf))})}
+function occurs(a,ds){if(ds<a.date)return false;if(a.repeat==="once")return ds===a.date;const d=parse(ds);
+  if(a.repeat==="daily")return true;if(a.repeat==="weekly")return parse(a.date).getDay()===d.getDay();if(a.repeat==="weekdays")return d.getDay()>0&&d.getDay()<6;return false}
+const eventsOn=ds=>S.alerts.filter(a=>occurs(a,ds)).sort((a,b)=>a.time.localeCompare(b.time));
+function depOf(date,time,min){const [h,m]=time.split(":").map(Number),d=parse(date);d.setHours(h,m-min,0,0);return{date:ymd(d),time:pad(d.getHours())+":"+pad(d.getMinutes())}}
+
+/* 5. Navigation */
+const nav=$("#nav");
+nav.insertAdjacentHTML("beforeend",PAGES.map(p=>`<button data-go="${p[0]}" aria-label="${p[1]}">${ic(p[2])}<span>${p[1]}</span></button>`).join(""));
+let page="home";
+function placeInd(){const b=$$("button",nav)[PAGES.findIndex(p=>p[0]===page)],ind=$(".ind",nav);nav.style.setProperty("--i",PAGES.findIndex(p=>p[0]===page));
+  if(innerWidth>=900&&b){ind.style.setProperty("--l",b.offsetLeft+"px");ind.style.setProperty("--w",b.offsetWidth+"px")}}
+function show(n){if(!PAGES.some(p=>p[0]===n))n="home";page=n;$$(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+n));
+  $$("button",nav).forEach(b=>b.toggleAttribute("aria-current",b.dataset.go===n)&&b.setAttribute("aria-current","page"));
+  $$("button",nav).forEach(b=>{if(b.dataset.go!==n)b.removeAttribute("aria-current")});placeInd();scrollTo(0,0);renderAll()}
+const go=n=>location.hash==="#"+n?show(n):(location.hash=n);
+
+/* 6. Rendu */
+function card(a,i){const T=TYPES[a.type]||TYPES.remind;
+  const when=a.repeat==="once"?fdate(a.date,{day:"numeric",month:"short"}):REPS[a.repeat];
+  return `<article class="card t-${a.type}${a.on?"":" off"}" style="animation-delay:${Math.min(i||0,8)*45}ms"><div class="tm">${esc(a.time)}</div>
+  <div><h3>${esc(a.name)}</h3><div class="m"><span>${ic(T.i)}${T.l}</span><span>${esc(when)}</span><span>${ic("vib")}${VIBS[a.vib]}, ${a.dur} ms</span>${a.place?`<span>${ic("pin")}${esc(a.place)}</span>`:""}</div>${a.note?`<div class="m">${esc(a.note)}</div>`:""}</div>
+  <div class="acts"><button class="sw" role="switch" aria-checked="${a.on}" aria-label="Activer ${esc(a.name)}" data-act="toggle" data-id="${a.id}"></button>
+  <button class="ib" data-act="edit" data-id="${a.id}" aria-label="Modifier ${esc(a.name)}">${ic("edit")}</button>
+  <button class="ib" data-act="del" data-id="${a.id}" aria-label="Supprimer ${esc(a.name)}">${ic("trash")}</button></div></article>`}
+const emptyBox=(t,p,btn)=>`<div class="empty"><h3>${t}</h3><p>${p}</p>${btn?`<button class="btn pri" data-act="new">Créer une alerte</button>`:""}</div>`;
+function renderHome(){const t=new Date(),ds=ymd(t),now=pad(t.getHours())+":"+pad(t.getMinutes()),ev=eventsOn(ds);
+  $("#todayLbl").textContent=fdate(ds);
+  $("#dayBox").innerHTML=ev.length?`<ol class="rows">${ev.map(a=>`<li><button class="row${a.on?"":" off"}" data-act="edit" data-id="${a.id}"><span class="t">${a.time}</span><span><span class="n">${esc(a.name)}</span><br><span class="s">${TYPES[a.type].l}${a.on?"":", désactivée"}${a.on&&a.time<now?", passée":""}</span></span>${ic("r")}</button></li>`).join("")}</ol>`:emptyBox("Votre journée est libre.","Aucune alerte prévue aujourd’hui.",true)}
+let cal={y:new Date().getFullYear(),m:new Date().getMonth()},sel=ymd(new Date());
+function renderCal(dir){const {y,m}=cal,g=$("#grid"),first=new Date(y,m,1),off=(first.getDay()+6)%7,n=new Date(y,m+1,0).getDate(),today=ymd(new Date());
+  $("#calT").textContent=first.toLocaleDateString("fr-FR",{month:"long",year:"numeric"});
+  let h="<span></span>".repeat(off);
+  for(let d=1;d<=n;d++){const ds=ymd(new Date(y,m,d)),c=eventsOn(ds).length;
+    h+=`<button class="day-b${ds===today?" today":""}${ds===sel?" sel":""}" data-act="pick" data-d="${ds}" aria-pressed="${ds===sel}" aria-label="${fdate(ds)}${c?`, ${c} alerte${c>1?"s":""}`:""}${ds===today?", aujourd’hui":""}"><b>${d}</b><i class="dots">${"<u></u>".repeat(Math.min(c,3))}</i></button>`}
+  g.innerHTML=h;if(dir){g.classList.remove("slR","slL");void g.offsetWidth;g.classList.add(dir>0?"slR":"slL")}
+  $("#selT").textContent=fdate(sel);const ev=eventsOn(sel);
+  $("#selList").innerHTML=ev.length?ev.map(card).join(""):emptyBox("Aucune alerte","Rien de prévu ce jour-là.",false)}
+let filter="all";
+function renderAlerts(){
+  $("#filters").innerHTML=[["all","Toutes"],...Object.entries(TYPES).map(([k,v])=>[k,v.l])].map(([k,l])=>`<label class="chip"><input type="radio" name="flt" value="${k}" ${k===filter?"checked":""} data-act="filter"><span>${l}</span></label>`).join("");
+  const l=S.alerts.filter(a=>filter==="all"||a.type===filter).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  $("#allList").innerHTML=l.length?l.map(card).join(""):emptyBox("Aucune alerte",filter==="all"?"Créez votre première alerte.":"Aucune alerte de ce type.",true)}
+function renderSettings(){const P=S.prefs,rows=[["lg","Texte agrandi","Augmente la taille de tous les textes."],["hc","Contraste renforcé","Bordures et textes plus marqués."],["rm","Réduire les animations","Supprime les mouvements de l’interface."]];
+  $("#setBox").innerHTML=
+  `<div class="set"><div><b>Compte</b><p>Connecté en tant que ${esc(AUTH.username||"")}. Ce compte fonctionne aussi sur grade.benross.ch.</p></div><button class="btn sm" data-act="logout">Se déconnecter</button></div>`+
+  rows.map(r=>`<div class="set"><div><b>${r[1]}</b><p>${r[2]}</p></div><button class="sw" role="switch" aria-checked="${P[r[0]]}" aria-label="${r[1]}" data-act="pref" data-k="${r[0]}"></button></div>`).join("")+
+  `<div class="set"><div><b>Alertes</b><p>${S.alerts.length} alerte${S.alerts.length>1?"s":""} enregistrée${S.alerts.length>1?"s":""} sur votre compte.</p></div><button class="btn sm dng" data-act="wipe">Tout effacer</button></div>`}
+let PROFILE=null;
+async function loadProfile(){
+  try{
+    const res=await fetch("/api/profile",{headers:authHeaders()});
+    if(res.status===401){await logout("Session expirée, reconnectez-vous.");return}
+    PROFILE=await res.json()
+  }catch(e){toast("Impossible de charger le profil.");PROFILE=null}
+}
+function renderProfile(){const b=$("#profileBox");if(!b)return;
+  if(!PROFILE){b.innerHTML=`<p class="lead">Chargement…</p>`;return}
+  const initials=(PROFILE.username||"?").slice(0,2).toUpperCase();
+  const since=PROFILE.created_at?new Date(PROFILE.created_at).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}):"—";
+  const last=PROFILE.last_login?new Date(PROFILE.last_login).toLocaleString("fr-FR"):"—";
+  b.innerHTML=`
+  <div style="display:flex;gap:1.2rem;align-items:center;flex-wrap:wrap;margin-bottom:1.6rem">
+    <button type="button" id="avaBtn" title="Changer la photo" style="width:72px;height:72px;flex:none;border-radius:50%;background:${PROFILE.avatar?`center/cover no-repeat url('${PROFILE.avatar}')`:"var(--ink)"};color:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3rem;border:var(--bw) solid var(--ink)">${PROFILE.avatar?"":esc(initials)}</button>
+    <input type="file" id="avaFile" accept="image/*" hidden>
+    <div>
+      <div style="font-weight:800;font-size:1.2rem">${esc(PROFILE.username)}</div>
+      <p class="lead" style="font-size:.85rem;margin-top:2px">Membre depuis le ${since}</p>
+      ${PROFILE.avatar?`<button type="button" class="btn sm" id="avaRemove" style="margin-top:8px">Supprimer la photo</button>`:""}
+    </div>
+  </div>
+  <dl>
+    <div><dt>Dernière connexion</dt><dd>${esc(last)}</dd></div>
+    <div><dt>Alertes créées</dt><dd>${PROFILE.stats.nb_alerts}</dd></div>
+    <div><dt>Alertes actives</dt><dd>${PROFILE.stats.nb_active}</dd></div>
+  </dl>
+  <div class="fld"><label for="prF">Nom complet</label><input type="text" id="prF" maxlength="100" value="${esc(PROFILE.full_name||"")}"></div>
+  <div class="fld"><label for="prE">Email</label><input type="email" id="prE" maxlength="200" value="${esc(PROFILE.email||"")}"></div>
+  <small id="prErr" role="alert" style="color:#8a1c1c"></small>
+  <div class="btns"><button class="btn pri" type="button" id="prSave">Enregistrer</button><button class="btn" type="button" id="prPwdBtn">Changer le mot de passe</button></div>`;
+  $("#avaBtn").onclick=()=>$("#avaFile").click();
+  $("#avaFile").onchange=e=>{const f=e.target.files[0];if(!f)return;
+    if(f.size>1500000){toast("Image trop volumineuse (1,5 Mo max).");return}
+    const reader=new FileReader();
+    reader.onload=async()=>{
+      const res=await fetch("/api/profile/avatar",{method:"PATCH",headers:Object.assign({"Content-Type":"application/json"},authHeaders()),body:JSON.stringify({avatar:reader.result})});
+      if(res.status===401)return logout("Session expirée, reconnectez-vous.");
+      if(!res.ok){toast("Envoi de la photo impossible.");return}
+      await loadProfile();renderProfile();toast("Photo mise à jour.")};
+    reader.readAsDataURL(f)};
+  const avaRemove=$("#avaRemove");if(avaRemove)avaRemove.onclick=async()=>{
+    const res=await fetch("/api/profile/avatar",{method:"PATCH",headers:Object.assign({"Content-Type":"application/json"},authHeaders()),body:JSON.stringify({avatar:null})});
+    if(!res.ok){toast("Suppression impossible.");return}
+    await loadProfile();renderProfile();toast("Photo supprimée.")};
+  $("#prSave").onclick=async()=>{$("#prErr").textContent="";
+    const full_name=$("#prF").value.trim(),email=$("#prE").value.trim();
+    try{
+      const res=await fetch("/api/profile",{method:"PATCH",headers:Object.assign({"Content-Type":"application/json"},authHeaders()),body:JSON.stringify({full_name,email})});
+      const j=await res.json().catch(()=>({}));
+      if(res.status===401)return logout("Session expirée, reconnectez-vous.");
+      if(!res.ok){$("#prErr").textContent=j.error||"Erreur.";return}
+      await loadProfile();renderProfile();toast("Profil mis à jour.")
+    }catch(e){$("#prErr").textContent="Connexion au serveur impossible."}};
+  $("#prPwdBtn").onclick=openPwdDialog}
+function openPwdDialog(){$("#pwCur").value="";$("#pwNew").value="";$("#pwErr").textContent="";$("#pwdDlg").showModal()}
+function renderAll(){renderHome();renderCal();renderAlerts();renderSettings();renderWatch();renderProfile()}
+
+/* 7. Calendrier */
+function moveMonth(d){cal.m+=d;if(cal.m<0){cal.m=11;cal.y--}if(cal.m>11){cal.m=0;cal.y++}renderCal(d)}
+$("[data-act=prev]").innerHTML=ic("l");$("[data-act=next]").innerHTML=ic("r");$("#form [data-act=close].ib").innerHTML=ic("x");
+
+/* 8. Événements : formulaire */
+let editing=null,opener=null;
+$("#fT").innerHTML=Object.entries(TYPES).map(([k,v])=>`<label class="chip"><input type="radio" name="type" value="${k}"><span>${ic(v.i)}${v.l}</span></label>`).join("");
+$("#fV").innerHTML=Object.entries(VIBS).map(([k,v])=>`<label class="chip"><input type="radio" name="vib" value="${k}"><span>${v}</span></label>`).join("");
+$("#fR").innerHTML=Object.entries(REPS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+const F=$("#form"),val=n=>F.elements[n].value;
+function updDep(){const isA=val("type")==="appt";$("#tr").style.display=isA?"":"none";const t=+$("#fTr").value,d=$("#fD").value,h=$("#fH").value;
+  $("#dep").textContent=isA&&t>0&&d&&h?`Départ à ${depOf(d,h,t).time} : une alerte « Partir pour… » sera créée. Trajet saisi à la main.`:"Temps de trajet manuel : Reveo ne le calcule pas."}
+function openSheet(a,ds){opener=document.activeElement;editing=a||null;$("#shT").textContent=a?"Modifier l’alerte":"Nouvelle alerte";$("#eN").textContent="";
+  const v=a||{name:"",type:"remind",date:ds||ymd(new Date()),time:"08:00",repeat:"once",vib:"short",dur:500,place:"",note:""};
+  $("#fN").value=v.name;F.elements.type.value=v.type;$("#fD").value=v.date;$("#fH").value=v.time;$("#fR").value=v.repeat;F.elements.vib.value=v.vib;$("#fM").value=v.dur;$("#fP").value=v.place;$("#fO").value=v.note;
+  const kid=a&&S.alerts.find(x=>x.parent===a.id);$("#fTr").value=kid?a.travel||"":"";updDep();
+  const w=$("#sh");w.hidden=false;void w.offsetWidth;w.classList.add("open");setTimeout(()=>$("#fN").focus(),80)}
+function closeSheet(){const w=$("#sh");w.classList.remove("open");setTimeout(()=>{w.hidden=true;opener&&opener.focus&&opener.focus()},350)}
+F.addEventListener("input",updDep);F.addEventListener("change",updDep);
+F.addEventListener("submit",async e=>{e.preventDefault();const name=$("#fN").value.trim();
+  if(!name){$("#eN").textContent="Saisissez un nom.";$("#fN").focus();return}
+  const date=$("#fD").value,time=$("#fH").value;if(!date||!time){toast("Choisissez une date et une heure.");return}
+  const type=val("type"),tr=type==="appt"?Math.max(0,parseInt($("#fTr").value,10)||0):0,dur=Math.min(5000,Math.max(100,parseInt($("#fM").value,10)||500));
+  const base={name,type,date,time,repeat:$("#fR").value,vib:val("vib"),dur,place:$("#fP").value.trim(),note:$("#fO").value.trim()};
+  let a=editing;if(a){Object.assign(a,base)}else{a=Object.assign({id:uid(),on:true},base);S.alerts.push(a)}
+  a.travel=tr||undefined;
+  let kid=S.alerts.find(x=>x.parent===a.id);
+  if(type==="appt"&&tr>0){const d=depOf(date,time,tr),k={name:"Partir pour "+name,type:"depart",date:d.date,time:d.time,repeat:base.repeat,vib:base.vib,dur,place:base.place,note:`Trajet manuel : ${tr} min`,parent:a.id};
+    if(kid)Object.assign(kid,k);else S.alerts.push(Object.assign({id:uid(),on:true},k))}
+  else if(kid)S.alerts=S.alerts.filter(x=>x!==kid);
+  if(!await save())return;sel=date;cal={y:parse(date).getFullYear(),m:parse(date).getMonth()};closeSheet();renderAll();toast(editing?"Alerte modifiée.":"Alerte enregistrée.")});
+F.addEventListener("keydown",e=>{if(e.key!=="Tab")return;const f=$$("button,input,select,textarea",F).filter(x=>x.offsetParent&&!x.disabled&&x.type!=="hidden"),a=f[0],z=f[f.length-1];
+  if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus()}else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#sh").hidden)closeSheet()});
+$("#pwCancel").addEventListener("click",()=>$("#pwdDlg").close());
+$("#pwdForm").addEventListener("submit",async e=>{e.preventDefault();$("#pwErr").textContent="";
+  const current_password=$("#pwCur").value,new_password=$("#pwNew").value;
+  if(!current_password){$("#pwErr").textContent="Le mot de passe actuel est requis.";return}
+  if(!new_password||new_password.length<6){$("#pwErr").textContent="Le nouveau mot de passe doit contenir au moins 6 caractères.";return}
+  try{
+    const res=await fetch("/api/change-password",{method:"POST",headers:Object.assign({"Content-Type":"application/json"},authHeaders()),body:JSON.stringify({current_password,new_password})});
+    const j=await res.json().catch(()=>({}));
+    if(res.status===401)return logout("Session expirée, reconnectez-vous.");
+    if(!res.ok){$("#pwErr").textContent=j.error||"Erreur.";return}
+    $("#pwdDlg").close();toast("Mot de passe modifié.")
+  }catch(err){$("#pwErr").textContent="Connexion au serveur impossible."}});
+async function del(a){if(!await ask(`Supprimer « ${a.name} » ?${S.alerts.some(x=>x.parent===a.id)?" L’alerte de départ liée sera aussi supprimée.":""}`))return;
+  S.alerts=S.alerts.filter(x=>x!==a&&x.parent!==a.id);await save();renderAll();toast("Alerte supprimée.")}
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){go(g.dataset.go);return}
+  const b=e.target.closest("[data-act]");if(!b||b.tagName==="INPUT")return;const act=b.dataset.act,a=S.alerts.find(x=>x.id===b.dataset.id);
+  ({new:()=>openSheet(null,null),newday:()=>openSheet(null,sel),close:closeSheet,prev:()=>moveMonth(-1),next:()=>moveMonth(1),
+  today:()=>{const t=new Date(),d=(t.getFullYear()-cal.y)*12+t.getMonth()-cal.m;cal={y:t.getFullYear(),m:t.getMonth()};sel=ymd(t);renderCal(d>0?1:-1)},
+  pick:()=>{sel=b.dataset.d;renderCal()},edit:()=>a&&openSheet(a),del:()=>a&&del(a),
+  toggle:async()=>{if(a){a.on=!a.on;await save();renderAll()}},pref:()=>{S.prefs[b.dataset.k]=!S.prefs[b.dataset.k];savePrefsLocal();applyPrefs();renderSettings()},
+  wipe:async()=>{if(await ask("Effacer toutes vos alertes sur ce compte ?","Tout effacer")){S.alerts=[];await syncAlerts();renderAll();toast("Alertes effacées.")}},
+  logout:()=>logout(),
+  btc:btConnect,btd:()=>W.dev&&W.dev.gatt.disconnect(),btv:()=>btSend(`VIBRATE:${Math.min(5000,Math.max(100,+$("#tvM").value||500))}:${$("#tvP").value}`,"Vibration envoyée."),
+  btt:()=>btSend("TIME:"+Math.floor(Date.now()/1000),"Heure envoyée.",true),bts:btAlerts,
+  btx:async()=>{if(await ask("Effacer toutes les alertes stockées dans la montre ?","Effacer"))btSend("CLEAR_ALARMS","Alertes effacées sur la montre.")},btr:readStatus}[act]||(()=>{}))()});
+document.addEventListener("change",e=>{if(e.target.dataset.act==="filter"){filter=e.target.value;renderAlerts()}});
+
+/* 9. Bluetooth */
+const BT={SVC:"12345678-1234-1234-1234-123456789000",CMD:"12345678-1234-1234-1234-123456789002",STA:"12345678-1234-1234-1234-123456789003",NAME:"Reveo-TWatch"};
+const W={dev:null,cmd:null,sta:null,raw:null,json:null,sync:null,busy:false,err:""};
+const btOK="bluetooth" in navigator&&window.isSecureContext;
+const isOn=()=>W.dev&&W.dev.gatt.connected&&W.cmd;
+function onStatus(dv){try{W.raw=new TextDecoder().decode(dv);try{W.json=JSON.parse(W.raw)}catch(e){W.json=null}}catch(e){}}
+async function btConnect(){W.busy=true;W.err="";renderWatch();
+  try{const dev=await navigator.bluetooth.requestDevice({filters:[{name:BT.NAME}],optionalServices:[BT.SVC]});
+    dev.addEventListener("gattserverdisconnected",()=>{W.cmd=W.sta=W.dev=null;W.raw=W.json=null;W.sync=null;renderWatch();toast("Montre déconnectée.")});
+    const srv=await dev.gatt.connect(),svc=await srv.getPrimaryService(BT.SVC);W.cmd=await svc.getCharacteristic(BT.CMD);
+    try{W.sta=await svc.getCharacteristic(BT.STA);if(W.sta.properties.notify){await W.sta.startNotifications();W.sta.addEventListener("characteristicvaluechanged",ev=>{onStatus(ev.target.value);renderWatch()})}}catch(e){W.sta=null}
+    W.dev=dev;await readStatus(true);toast("Montre connectée.")}
+  catch(e){W.err=e.name==="NotFoundError"?"Aucune montre sélectionnée.":"Connexion impossible : "+e.message}
+  W.busy=false;renderWatch()}
+async function readStatus(q){if(!isOn())return;try{await W.cmd.writeValue(new TextEncoder().encode("GET_STATUS"));if(W.sta){onStatus(await W.sta.readValue())}else if(!q)W.err="La montre n’expose pas de caractéristique d’état."}catch(e){W.err="Lecture de l’état impossible : "+e.message}renderWatch()}
+async function btSend(cmd,ok,mark){if(!isOn()){toast("Montre non connectée.");return false}
+  const bytes=new TextEncoder().encode(cmd);if(bytes.length>512){W.err="Commande trop longue pour une écriture Bluetooth (512 octets max). Désactivez ou supprimez des alertes.";renderWatch();return false}
+  try{await W.cmd.writeValue(bytes);W.err="";if(mark||cmd.startsWith("SET_")||cmd==="CLEAR_ALARMS")W.sync=new Date();toast(ok);renderWatch();return true}
+  catch(e){W.err="Envoi impossible : "+e.message;renderWatch();return false}}
+function btAlerts(){const p=S.alerts.filter(a=>a.on).map(a=>({n:a.name,d:a.date,t:a.time,r:a.repeat,v:a.vib,ms:a.dur}));
+  return btSend("SET_ALARMS:"+JSON.stringify(p),`${p.length} alerte${p.length>1?"s":""} envoyée${p.length>1?"s":""}.`)}
+function renderWatch(){const b=$("#watchBox");if(!b)return;
+  if(!btOK){b.innerHTML=`<div class="stat"><span class="led"></span>Montre non connectée</div><div class="note err" role="alert">Bluetooth Web n’est pas disponible dans ce navigateur.<br>Utilisez Chrome ou Edge sur ordinateur ou Android, depuis un contexte sécurisé. Safari sur iPhone ne le prend pas en charge.</div>`;return}
+  const on=isOn(),j=W.json||{},bat=typeof j.battery==="number"?j.battery+" %":null,fw=j.firmware||j.fw||null;
+  let h=`<div class="stat ${on?"on":""}"><span class="led"></span>${on?"Montre connectée":"Montre non connectée"}</div>`;
+  if(W.err)h+=`<div class="note err" role="alert">${esc(W.err)}</div>`;
+  if(!on){h+=`<p class="lead">Allumez la montre, activez le Bluetooth, puis choisissez « ${BT.NAME} » dans la fenêtre du navigateur.</p><div class="btns"><button class="btn pri" data-act="btc" ${W.busy?"disabled":""}>${W.busy?"Connexion en cours":"Connecter la montre"}</button></div>`}
+  else{h+=`<dl><div><dt>Appareil</dt><dd>${esc(W.dev.name||"Sans nom")}</dd></div>${bat?`<div><dt>Batterie</dt><dd>${esc(bat)}</dd></div>`:""}${fw?`<div><dt>Firmware</dt><dd>${esc(fw)}</dd></div>`:""}<div><dt>Dernier envoi</dt><dd>${W.sync?W.sync.toLocaleTimeString("fr-FR"):"Aucun envoi pendant cette session"}</dd></div>${W.raw&&!W.json?`<div><dt>Réponse de la montre</dt><dd>${esc(W.raw)}</dd></div>`:""}</dl>
+  <div class="btns"><label class="sr" for="tvP">Motif</label><select id="tvP" class="btn sm" style="background:var(--paper)">${Object.entries(VIBS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select><label class="sr" for="tvM">Durée en ms</label><input id="tvM" type="number" value="500" min="100" max="5000" step="100" class="btn sm" style="width:6.5rem;background:var(--paper)"><button class="btn sm" data-act="btv">Tester la vibration</button></div>
+  <div class="btns"><button class="btn sm pri" data-act="bts">Envoyer les alertes</button><button class="btn sm" data-act="btt">Synchroniser l’heure</button><button class="btn sm" data-act="btr">Lire l’état</button><button class="btn sm dng" data-act="btx">Effacer les alertes de la montre</button><button class="btn sm" data-act="btd">Déconnecter</button></div>`}
+  const keep=on&&$("#tvP")?[$("#tvP").value,$("#tvM").value]:null;b.innerHTML=h;if(keep){$("#tvP").value=keep[0];$("#tvM").value=keep[1]}}
+
+/* 10. Accessibilité */
+function applyPrefs(){const r=document.documentElement.classList;r.toggle("lg",S.prefs.lg);r.toggle("hc",S.prefs.hc);r.toggle("rm",S.prefs.rm);placeInd()}
+
+/* 11. Animations */
+const reduced=()=>S.prefs.rm||matchMedia("(prefers-reduced-motion:reduce)").matches;
+const io="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12}):null;
+$$(".rv").forEach(el=>io?io.observe(el):el.classList.add("in"));
+let ticking=false;addEventListener("scroll",()=>{if(ticking||reduced())return;ticking=true;requestAnimationFrame(()=>{document.documentElement.style.setProperty("--py",scrollY);$(".hero")&&$(".hero").style.setProperty("--py",scrollY);ticking=false})},{passive:true});
+addEventListener("resize",placeInd);
+
+/* 12. Authentification */
+let authMode="login";
+function setAuthMode(m){authMode=m;$("#authTitle").textContent=m==="login"?"Connexion":"Inscription";
+  $("#auSubmit").textContent=m==="login"?"Se connecter":"S’inscrire";
+  $("#auSwitch").textContent=m==="login"?"Pas encore de compte ? S’inscrire":"Déjà un compte ? Se connecter";
+  $("#auEwrap").hidden=m==="login";$("#auErr").textContent=""}
+$("#auSwitch").addEventListener("click",()=>setAuthMode(authMode==="login"?"register":"login"));
+$("#authForm").addEventListener("submit",async e=>{e.preventDefault();$("#auErr").textContent="";
+  const username=$("#auU").value.trim(),password=$("#auP").value,email=$("#auE").value.trim();
+  if(!username){$("#auErr").textContent="Le nom d’utilisateur est requis.";return}
+  if(!password){$("#auErr").textContent="Le mot de passe est requis.";return}
+  if(authMode==="register"&&password.length<6){$("#auErr").textContent="Le mot de passe doit contenir au moins 6 caractères.";return}
+  if(authMode==="register"&&!email){$("#auErr").textContent="L’adresse email est requise.";return}
+  if(authMode==="register"&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){$("#auErr").textContent="Adresse email invalide.";return}
+  const body=authMode==="login"?{username,password}:{username,password,email};
+  $("#auSubmit").disabled=true;
+  try{
+    const res=await fetch("/api/"+authMode,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const j=await res.json().catch(()=>({}));
+    if(!res.ok){$("#auErr").textContent=j.error||"Erreur.";$("#auSubmit").disabled=false;return}
+    AUTH.token=j.token;AUTH.username=j.username;localStorage.setItem(TOKEN_KEY,j.token);
+    await afterLogin()
+  }catch(err){$("#auErr").textContent="Connexion au serveur impossible."}
+  $("#auSubmit").disabled=false});
+
+async function afterLogin(){$("#authGate").hidden=true;await Promise.all([loadAlertsFromServer(),loadProfile()]);show(location.hash.slice(1)||"home")}
+async function boot(){
+  AUTH.token=localStorage.getItem(TOKEN_KEY)||null;
+  try{
+    const res=await fetch("/api/whoami",{headers:authHeaders()});
+    if(res.ok){const j=await res.json();AUTH.username=j.username;
+      if(j.token){AUTH.token=j.token;localStorage.setItem(TOKEN_KEY,j.token)}
+      await afterLogin();return}
+  }catch(e){}
+  localStorage.removeItem(TOKEN_KEY);AUTH.token=null;AUTH.username=null;$("#authGate").hidden=false
+}
+
+/* 13. Initialisation */
+loadPrefsLocal();applyPrefs();
+addEventListener("hashchange",()=>{if(AUTH.username)show(location.hash.slice(1))});
+document.fonts&&document.fonts.ready.then(placeInd);
+boot();
+</script>
+</body>
+</html>

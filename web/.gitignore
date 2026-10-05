@@ -1,0 +1,4 @@
+node_modules/
+reveo.db
+reveo.db-*
+.env
