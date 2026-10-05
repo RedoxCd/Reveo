@@ -36,7 +36,7 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .nav button:not([aria-current=page]){color:var(--mut)}
 @keyframes navBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 @keyframes navSpin{to{transform:rotate(360deg)}}
-@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:auto;height:58px;border-radius:30px;background:transparent;border-color:transparent;box-shadow:none;transition:background .5s var(--ease) .1s,border-color .5s var(--ease) .1s,box-shadow .5s var(--ease) .1s}
+@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:auto;height:58px;border-radius:30px;background:transparent;border-color:transparent;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;transition:background .5s var(--ease) .1s,border-color .5s var(--ease) .1s,box-shadow .5s var(--ease) .1s}
 .nav:hover,.nav:focus-within{background:rgba(255,253,248,.68);border-color:rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08)}
 .nav-cap{display:flex;align-items:center;justify-content:center;position:absolute;z-index:2;top:0;left:50%;transform:translate(-50%,0) scale(1);width:58px;height:58px;border-radius:50%;background:var(--ink);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 18px 40px -12px rgba(21,21,19,.35),0 4px 10px rgba(21,21,19,.08);opacity:1;transition:opacity .45s var(--ease),transform .5s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .nav:hover .nav-cap,.nav:focus-within .nav-cap{opacity:0;transform:translate(-50%,0) scale(1.8)}
