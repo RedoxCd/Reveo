@@ -33,13 +33,16 @@ svg.i{width:1.4em;height:1.4em;fill:none;stroke:currentColor;stroke-width:1.6;st
 .nav button svg{transition:transform .4s var(--ease)}
 .nav button[aria-current=page] svg{transform:translateY(-1px) scale(1.12)}
 .nav button:not([aria-current=page]){color:var(--mut)}
-@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:58px;height:58px;border-radius:50%;overflow:hidden;transition:width .6s var(--ease),border-radius .6s var(--ease)}
+@keyframes navBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+@keyframes navSpin{to{transform:rotate(360deg)}}
+@media(min-width:900px){.nav{top:16px;bottom:auto;grid-template-columns:repeat(6,auto);width:58px;height:58px;border-radius:50%;overflow:hidden;transition:width .6s cubic-bezier(.34,1.56,.64,1),border-radius .6s cubic-bezier(.34,1.56,.64,1)}
 .nav:hover,.nav:focus-within{width:auto;border-radius:30px}
-.nav-handle{display:flex;position:absolute;inset:0;margin:auto;width:28px;height:28px;opacity:1;transform:scale(1) rotate(0deg);transition:opacity .35s var(--ease),transform .5s var(--ease);pointer-events:none}
-.nav:hover .nav-handle,.nav:focus-within .nav-handle{opacity:0;transform:scale(.4) rotate(90deg)}
-.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;opacity:0;transition:left .5s var(--ease),width .5s var(--ease),opacity .35s var(--ease) .1s}
+.nav-handle{display:flex;position:absolute;inset:0;margin:auto;width:28px;height:28px;opacity:1;transform:scale(1) rotate(0deg);transition:opacity .3s var(--ease),transform .45s var(--ease);animation:navBreathe 2.6s ease-in-out infinite;pointer-events:none}
+.nav-handle circle:first-child{transform-origin:16px 16px;animation:navSpin 6s linear infinite}
+.nav:hover .nav-handle,.nav:focus-within .nav-handle{opacity:0;transform:scale(.3) rotate(120deg);animation:none}
+.nav .ind{width:var(--w,16.6%);left:var(--l,6px);transform:none;opacity:0;transition:left .5s var(--ease),width .5s var(--ease),opacity .35s var(--ease) .15s}
 .nav:hover .ind,.nav:focus-within .ind{opacity:1}
-.nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem;opacity:0;transform:translateX(-10px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.nav button{flex-direction:row;gap:.5rem;padding:0 1.1rem;min-height:46px;font-size:.9rem;opacity:0;transform:translateX(-14px) scale(.7);transition:opacity .4s var(--ease),transform .45s cubic-bezier(.34,1.56,.64,1)}
 .nav:hover button,.nav:focus-within button{opacity:1;transform:none}
 .nav button:nth-child(4){transition-delay:.04s}.nav button:nth-child(5){transition-delay:.08s}.nav button:nth-child(6){transition-delay:.12s}.nav button:nth-child(7){transition-delay:.16s}.nav button:nth-child(8){transition-delay:.2s}}
 /* Layout */
